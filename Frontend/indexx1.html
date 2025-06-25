@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Benefits Portal</title>
+    <title>MyEmployee Benefits Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -46,14 +46,13 @@
             min-height: 100vh;
         }
 
-         header {
+        header {
             background: linear-gradient(135deg, #5f1aff, #b74cd7);
             color: white;
             text-align: center;
-            padding: 20px 20px;
+            padding: 20px;
             border-radius: 12px;
             width: 100%;
-           
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
@@ -108,7 +107,6 @@
             100% { transform: translate(0, 0); }
         }
 
-
         .container {
             display: flex;
             flex-wrap: wrap;
@@ -156,11 +154,11 @@
         }
 
         .benefit-card {
-            background: linear-gradient(rgba(161, 255, 230, 0.489),rgb(255, 221, 255));
+            background: linear-gradient(rgba(161, 255, 230, 0.489), rgb(255, 221, 255));
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-sm);
             padding: 1.5rem;
-           color: black;
+            color: black;
             transition: var(--transition);
             border-left: 4px solid var(--primary);
             position: relative;
@@ -204,7 +202,7 @@
             font-family: 'Poppins', sans-serif;
             font-size: 1.25rem;
             margin-bottom: 0.75rem;
-            color:black;
+            color: black;
         }
 
         .benefit-card p {
@@ -266,7 +264,6 @@
             color: var(--secondary);
         }
 
-        /* Form Styles */
         .request-form {
             background: white;
             padding: 1.5rem;
@@ -351,7 +348,6 @@
             cursor: not-allowed;
         }
 
-        /* Activities Section */
         .activities-section {
             width: 100%;
             padding: 2rem 1rem;
@@ -428,7 +424,6 @@
             color: var(--gray-light);
         }
 
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -527,7 +522,6 @@
             margin-top: 1.5rem;
         }
 
-        /* Loan Specific Styles */
         .loan-options {
             display: none;
             margin-top: 1.5rem;
@@ -575,7 +569,6 @@
             display: none;
         }
 
-        /* Responsive Styles */
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -616,7 +609,6 @@
             }
         }
 
-        /* Utility Classes */
         .text-success {
             color: var(--success);
         }
@@ -788,7 +780,6 @@
                         <div class="error-message" id="reason-error">Reason cannot have leading/trailing spaces or consecutive spaces</div>
                     </div>
                     
-                    <!-- Loan Specific Fields -->
                     <div class="loan-options" id="loan-options">
                         <div class="form-group">
                             <label for="loan-amount">Loan Amount (₹)</label>
@@ -852,12 +843,11 @@
         </div>
     </section>
 
-    <!-- Request Details Modal -->
     <div class="modal" id="details-modal" role="dialog" aria-labelledby="modal-title">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Request Details</h2>
-                <button class="close-modal" onclick="closeModal()">&times;</button>
+                <button class="close-modal" onclick="closeModal()">×</button>
             </div>
             
             <div class="modal-info">
@@ -890,7 +880,6 @@
                 <span id="detail-reason">Not specified</span>
             </div>
             
-            <!-- Loan Specific Details -->
             <div id="loan-details" style="display: none;">
                 <div class="modal-divider"></div>
                 
@@ -919,7 +908,6 @@
     </div>
 
     <script>
-        // Employee Benefits Portal Application
         class EmployeeBenefitsApp {
             constructor() {
                 this.BASE_URL = 'http://localhost:3006';
@@ -944,26 +932,22 @@
             }
             
             setupEventListeners() {
-                // Show/hide loan options based on program selection
                 document.getElementById('program').addEventListener('change', () => {
                     const loanOptions = document.getElementById('loan-options');
                     loanOptions.style.display = this.program.value === 'Employee Loans' ? 'block' : 'none';
                 });
                 
-                // Form submission
                 document.getElementById('request-form').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.submitRequest();
                 });
                 
-                // Load requests when employee ID is entered
                 document.getElementById('emp-id').addEventListener('blur', () => {
                     if (this.validateEmpId(this.empId.value.trim())) {
                         this.loadEmployeeRequests(this.empId.value.trim());
                     }
                 });
                 
-                // File upload display
                 document.getElementById('loan-docs').addEventListener('change', (e) => {
                     const fileName = e.target.files[0]?.name || '';
                     const fileNameElement = document.getElementById('file-name');
@@ -978,28 +962,24 @@
             }
             
             setupValidations() {
-                // Employee ID validation (ATS0 followed by 3 digits, not all zeros)
                 this.empId.addEventListener('input', () => {
                     const isValid = this.validateEmpId(this.empId.value.trim());
                     this.toggleError('emp-id-error', !isValid);
                     this.empId.setCustomValidity(isValid ? '' : 'Employee ID must be ATS0 followed by 3 digits (not all zeros)');
                 });
                 
-                // Name validation (letters and spaces only)
                 this.name.addEventListener('input', () => {
                     const isValid = /^[A-Za-z\s]+$/.test(this.name.value.trim());
                     this.toggleError('name-error', !isValid);
                     this.name.setCustomValidity(isValid ? '' : 'Invalid name format');
                 });
                 
-                // Email validation (3-50 chars before @gmail.com, no special characters except ._-)
                 this.email.addEventListener('input', () => {
                     const isValid = /^[a-zA-Z0-9._-]{3,50}@gmail\.com$/.test(this.email.value.trim());
                     this.toggleError('email-error', !isValid);
                     this.email.setCustomValidity(isValid ? '' : 'Email must be 3-50 characters before @gmail.com, no special characters');
                 });
                 
-                // Date validation (between today and 6 months from now)
                 this.requestDate.addEventListener('change', () => {
                     const selectedDate = new Date(this.requestDate.value);
                     const today = new Date();
@@ -1012,7 +992,6 @@
                     this.requestDate.setCustomValidity(isValid ? '' : 'Invalid date range');
                 });
                 
-                // Reason validation (no leading/trailing/consecutive spaces)
                 this.reason.addEventListener('input', () => {
                     const value = this.reason.value.trim();
                     const hasLeadingTrailing = value !== this.reason.value;
@@ -1023,7 +1002,6 @@
                     this.reason.setCustomValidity(isValid ? '' : 'Invalid reason format');
                 });
                 
-                // Loan amount validation
                 this.loanAmount?.addEventListener('input', () => {
                     const value = parseFloat(this.loanAmount.value);
                     const isValid = !isNaN(value) && value >= 10000 && value <= 1000000;
@@ -1031,7 +1009,6 @@
                     this.loanAmount.setCustomValidity(isValid ? '' : 'Invalid amount');
                 });
                 
-                // File validation (PDF, JPG, JPEG, PNG, max 5MB)
                 this.loanDocs?.addEventListener('change', () => {
                     const file = this.loanDocs.files[0];
                     const isValid = !file || (/\.(pdf|jpg|jpeg|png)$/i.test(file.name) && file.size <= 5 * 1024 * 1024);
@@ -1040,7 +1017,6 @@
                 });
             }
             
-            // DOM element getters
             get empId() { return document.getElementById('emp-id'); }
             get name() { return document.getElementById('name'); }
             get email() { return document.getElementById('email'); }
@@ -1052,7 +1028,6 @@
             get loanDocs() { return document.getElementById('loan-docs'); }
             get submitBtn() { return document.getElementById('submit-btn'); }
             
-            // Utility methods
             formatDateForInput(date) {
                 const year = date.getFullYear();
                 const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -1121,12 +1096,10 @@
             }
             
             updateStatusIndicators(requests) {
-                // Reset all status indicators
                 document.querySelectorAll('.status-info').forEach(el => {
                     el.innerHTML = '';
                 });
                 
-                // Update each program's status
                 requests.forEach(req => {
                     const programId = req.program.toLowerCase().replace(/\s+/g, '-');
                     const statusDiv = document.getElementById(`status-${programId}`);
@@ -1143,23 +1116,21 @@
                         statusDiv.appendChild(statusBadge);
                         statusDiv.appendChild(dateSpan);
                         
-                        // For one-time programs, show ongoing status
-                      // For one-time programs, show ongoing status
-if (['Yoga and Meditation', 'Awareness Programs', 'Health Checkup Camps'].includes(req.program)) {
-    if (req.status === 'Approved') {
-        const ongoingBadge = document.createElement('span');
-        ongoingBadge.className = 'status-badge status-ongoing';
-        ongoingBadge.innerHTML = `<i class="fas fa-sync-alt"></i> Ongoing`;
-        statusDiv.appendChild(ongoingBadge);
-    }
-}
+                        if (['Yoga and Meditation', 'Awareness Programs', 'Health Checkup Camps'].includes(req.program)) {
+                            if (req.status === 'Approved') {
+                                const ongoingBadge = document.createElement('span');
+                                ongoingBadge.className = 'status-badge status-ongoing';
+                                ongoingBadge.innerHTML = `<i class="fas fa-sync-alt"></i> Ongoing`;
+                                statusDiv.appendChild(ongoingBadge);
+                            }
+                        }
                     }
                 });
             }
             
             async showRequestDetails(requestId) {
                 try {
-                    const response = await fetch(`${this.BASE_URL}/api/requests`);
+                    const response = await fetch(`${this.BASE_URL}/api/requests/emp/${this.empId.value.trim()}`);
                     const requests = await response.json();
                     const request = requests.find(r => r.id === requestId);
                     if (!request) {
@@ -1185,7 +1156,6 @@ if (['Yoga and Meditation', 'Awareness Programs', 'Health Checkup Camps'].includ
                 
                 document.getElementById('detail-reason').textContent = request.reason || 'Not specified';
                 
-                // Handle loan details if this is a loan request
                 const loanDetails = document.getElementById('loan-details');
                 if (request.program === 'Employee Loans') {
                     loanDetails.style.display = 'block';
@@ -1195,7 +1165,10 @@ if (['Yoga and Meditation', 'Awareness Programs', 'Health Checkup Camps'].includ
                     
                     const docsElement = document.getElementById('detail-loan-docs');
                     if (request.document_path) {
-                        docsElement.innerHTML = `<a href="${this.BASE_URL}/${request.document_path}" target="_blank" class="text-primary">
+                        // Normalize path to handle both forward and backslashes
+                        const normalizedPath = request.document_path.replace(/\\/g, '/');
+                        const filename = normalizedPath.split('/').pop();
+                        docsElement.innerHTML = `<a href="${this.BASE_URL}/download/${encodeURIComponent(filename)}" target="_blank" class="text-primary">
                             <i class="fas fa-file-download"></i> Download Document
                         </a>`;
                     } else {
@@ -1247,20 +1220,16 @@ if (['Yoga and Meditation', 'Awareness Programs', 'Health Checkup Camps'].includ
                 this.submitBtn.disabled = true;
                 this.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
                 
-                // Get form values
                 const name = this.name.value.trim();
                 const email = this.email.value.trim();
                 const empId = this.empId.value.trim();
                 const program = this.program.value;
                 const date = this.requestDate.value;
                 const reason = this.reason.value.trim();
-                
-                // Loan specific fields
                 const loanAmount = this.loanAmount?.value;
                 const loanPurpose = this.loanPurpose?.value;
                 const loanDocs = this.loanDocs?.files[0];
                 
-                // Validate all fields
                 const nameValid = /^[A-Za-z\s]+$/.test(name);
                 const emailValid = /^[a-zA-Z0-9._-]{3,50}@gmail\.com$/.test(email);
                 const empIdValid = this.validateEmpId(empId);
@@ -1285,7 +1254,6 @@ if (['Yoga and Meditation', 'Awareness Programs', 'Health Checkup Camps'].includ
                     this.toggleError('loan-docs-error', !loanDocsValid);
                 }
                 
-                // Show errors if any
                 this.toggleError('name-error', !nameValid);
                 this.toggleError('email-error', !emailValid);
                 this.toggleError('emp-id-error', !empIdValid);
@@ -1298,7 +1266,6 @@ if (['Yoga and Meditation', 'Awareness Programs', 'Health Checkup Camps'].includ
                     return;
                 }
                 
-                // Check for duplicate requests for one-time programs
                 const oneTimePrograms = ['Yoga and Meditation', 'Mental Health Support', 'Awareness Programs', 'Health Checkup Camps', 'Gym Membership'];
                 if (oneTimePrograms.includes(program)) {
                     try {
@@ -1340,12 +1307,11 @@ if (['Yoga and Meditation', 'Awareness Programs', 'Health Checkup Camps'].includ
                     if (response.ok) {
                         const result = await response.json();
                         this.showAlert('🎉 Request submitted successfully!');
-                        this.loadEmployeeRequests(empId); // Refresh the requests list
+                        this.loadEmployeeRequests(empId);
                         this.requestForm.reset();
                         document.getElementById('loan-options').style.display = 'none';
                         document.getElementById('file-name').style.display = 'none';
                         
-                        // Reset date to today
                         const today = new Date();
                         this.requestDate.value = this.formatDateForInput(today);
                     } else {
@@ -1366,13 +1332,9 @@ if (['Yoga and Meditation', 'Awareness Programs', 'Health Checkup Camps'].includ
             }
         }
 
-        // Initialize the application
         const app = new EmployeeBenefitsApp();
-        
-        // Make app available globally for button click handlers
         window.app = app;
         
-        // Global close modal function
         function closeModal() {
             app.closeModal();
         }

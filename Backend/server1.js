@@ -4,11 +4,11 @@ const { Pool } = require('pg');
 const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
+const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 3006;
 
 // PostgreSQL connection
-app.use(cors());
 const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
   host: process.env.DB_HOST || 'localhost',
@@ -20,19 +20,28 @@ const pool = new Pool({
 // Multer setup for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, 'Uploads/');
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+    cb(null, uniqueSuffix + path.extname(file.originalName));
   },
 });
+
+const uploadDir = path.join(__dirname, 'Uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
+    if (!file || !file.originalName) {
+      return cb(null, true);
+    }
     const filetypes = /pdf|jpg|jpeg|png/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = filetypes.test(path.extname(file.originalName).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
     if (extname && mimetype) {
       return cb(null, true);
@@ -49,6 +58,7 @@ app.use(cors({
     "http://127.0.0.1:5500",
     "http://localhost:5500",
     "http://127.0.0.1:5501",
+    "http://127.0.0.1:5503",
     "http://localhost:8081",
     "http://localhost:8089",
   ],
@@ -59,7 +69,32 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
+
+// Route to handle file downloads
+app.get('/download/:filename', (req, res) => {
+  let filename = req.params.filename;
+  // Normalize filename to handle both forward and backslashes
+  filename = filename.replace(/\\/g, '/').split('/').pop();
+  const filePath = path.join(__dirname, 'Uploads', filename);
+  console.log('Requested file path:', filePath); // Debug log
+
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.error('File access error:', err);
+      return res.status(404).json({ error: 'File not found' });
+    }
+
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        return res.status(500).json({ error: 'Error downloading file', details: err.message });
+      }
+      console.log(`File ${filename} sent successfully`);
+    });
+  });
+});
 
 // Create requests table if not exists
 async function initializeDatabase() {
@@ -96,7 +131,7 @@ initializeDatabase();
 app.post('/api/requests', upload.single('document'), async (req, res) => {
   try {
     const { name, email, empId, program, program_time, date, reason, loan_type, amount } = req.body;
-    const documentPath = req.file ? req.file.path : null;
+    const documentPath = req.file ? `Uploads/${req.file.filename}` : null;
 
     // Check for duplicate request for one-time programs
     const oneTimePrograms = [
@@ -180,7 +215,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/hr', (req, res) => {
-  res.sendFile(path.join(__dirname, 'HR_Page', 'index.html'));
+  res.sendFile(path.join(__dirname, 'HR_page', 'index.html'));
 });
 
 // Start server

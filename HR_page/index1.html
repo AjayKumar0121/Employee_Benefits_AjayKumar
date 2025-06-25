@@ -15,7 +15,7 @@
             --success: #00b894;
             --warning: #fdcb6e;
             --danger: #d63031;
-            --light: #f8f9fa;
+            --light: #f8 peyfa;
             --dark: #2d3436;
             --gray: #636e72;
             --gray-light: #dfe6e9;
@@ -50,10 +50,9 @@
             background: linear-gradient(135deg, #5f1aff, #b74cd7);
             color: white;
             text-align: center;
-            padding: 20px 20px;
+            padding: 20px;
             border-radius: 12px;
             width: 100%;
-           
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
@@ -191,7 +190,7 @@
 
         .status-pending {
             background-color: rgba(253, 203, 110, 0.2);
-            color: #e17055;
+            color: var(--warning);
         }
 
         .status-approved {
@@ -233,7 +232,6 @@
             color: var(--gray-light);
         }
 
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -290,16 +288,16 @@
             gap: 0.5rem;
         }
 
-        .close-modal {
+        .close-modal-btn {
             background: none;
             border: none;
+            color: var(--gray);
             font-size: 1.5rem;
             cursor: pointer;
-            color: var(--gray);
             transition: var(--transition);
         }
 
-        .close-modal:hover {
+        .close-modal-btn:hover {
             color: var(--dark);
         }
 
@@ -307,7 +305,8 @@
             background: var(--light);
             border-radius: var(--radius-md);
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-md);
         }
 
         .detail-row {
@@ -316,10 +315,10 @@
         }
 
         .detail-label {
-            flex: 0 0 120px;
-            font-weight: 500;
+            flex: 0 0 150px;
+            font-weight: bold;
             color: var(--gray);
-            font-size: 0.85rem;
+            font-size: 0.95rem;
         }
 
         .detail-value {
@@ -334,8 +333,8 @@
         }
 
         .modal-divider {
+            background-color: var(--gray-light);
             height: 1px;
-            background: var(--gray-light);
             margin: 1.5rem 0;
         }
 
@@ -375,7 +374,7 @@
         }
 
         .btn-success:hover:not(:disabled) {
-            background: #00a884;
+            background: #00a084;
         }
 
         .btn-danger {
@@ -397,7 +396,6 @@
             background: rgba(108, 92, 231, 0.1);
         }
 
-        /* Confirmation Modal */
         .confirmation-modal .modal-content {
             text-align: center;
         }
@@ -412,7 +410,6 @@
             font-size: 1.1rem;
         }
 
-        /* Alert Styles */
         .alert {
             position: fixed;
             top: 20px;
@@ -430,6 +427,11 @@
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
         }
 
         .alert-success {
@@ -450,9 +452,9 @@
             margin-left: 0.5rem;
         }
 
-        /* Responsive Styles */
         @media (max-width: 768px) {
-            .requests-table th, .requests-table td {
+            .requests-table th, 
+            .requests-table td {
                 padding: 0.75rem;
                 font-size: 0.85rem;
             }
@@ -463,7 +465,7 @@
             }
             
             .detail-label {
-                flex: 1;
+                flex: none;
             }
         }
 
@@ -471,7 +473,7 @@
             header h1 {
                 font-size: 1.8rem;
             }
-            
+
             .modal-buttons {
                 flex-direction: column;
             }
@@ -480,18 +482,21 @@
                 width: 100%;
             }
         }
+
+        .text-primary {
+            color: var(--primary);
+        }
     </style>
 </head>
 <body>
-   <header>
+    <header>
         <div class="circle"></div>
         <div class="circle"></div>
         <div class="circle"></div>
-<h1>Empowering Employee, Enabling Benefits</h1>
-
-     <p>"Every request is a step toward care — review with purpose."</p>
-
+        <h1>Empowering Employees, Enabling Benefits</h1>
+        <p>"Every request is a step toward care — review with purpose."</p>
     </header>
+
     <div class="container">
         <section class="requests-section">
             <h2 class="section-title">All Benefit Requests</h2>
@@ -511,360 +516,326 @@
                         <tr>
                             <td colspan="6" class="empty-state">
                                 <i class="fas fa-spinner fa-spin"></i>
-                                <p>Loading requests...</p>
+                                <p>Loading...</p>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
-    </div>
 
-    <!-- Request Details Modal -->
-    <div class="modal" id="details-modal" role="dialog" aria-labelledby="modal-title">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title"><i class="fas fa-file-alt"></i> Request Details</h2>
-                <button class="close-modal" onclick="closeModal()">&times;</button>
-            </div>
-            
-            <div class="detail-card">
-                <div class="detail-row">
-                    <div class="detail-label">Employee Name</div>
-                    <div class="detail-value" id="detail-name">-</div>
+        <!-- Request Details Modal -->
+        <div class="modal" id="details-modal" role="dialog" aria-labelledby="modal-title">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title"><i class="fas fa-file-alt"></i> Request Details</h2>
+                    <button class="close-modal-btn" onclick="app.closeModal('details-modal')">×</button>
                 </div>
                 
-                <div class="detail-row">
-                    <div class="detail-label">Employee ID</div>
-                    <div class="detail-value" id="detail-emp-id">-</div>
+                <div class="detail-card">
+                    <div class="detail-row">
+                        <div class="detail-label">Employee Name</div>
+                        <div class="detail-value" id="detail-name">-</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Employee ID</div>
+                        <div class="detail-value" id="detail-emp-id">-</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value" id="detail-email">-</div>
+                    </div>
                 </div>
                 
-                <div class="detail-row">
-                    <div class="detail-label">Email</div>
-                    <div class="detail-value" id="detail-email">-</div>
-                </div>
-            </div>
-            
-            <div class="detail-card">
-                <div class="detail-row">
-                    <div class="detail-label">Benefit Program</div>
-                    <div class="detail-value" id="detail-program">-</div>
-                </div>
-                
-                <div class="detail-row">
-                    <div class="detail-label">Program Time</div>
-                    <div class="detail-value" id="detail-program-time">-</div>
-                </div>
-                
-                <div class="detail-row">
-                    <div class="detail-label">Request Date</div>
-                    <div class="detail-value" id="detail-date">-</div>
-                </div>
-                
-                <div class="detail-row">
-                    <div class="detail-label">Status</div>
-                    <div class="detail-value status" id="detail-status">-</div>
-                </div>
-                
-                <div class="detail-row">
-                    <div class="detail-label">Reason</div>
-                    <div class="detail-value" id="detail-reason">Not specified</div>
-                </div>
-            </div>
-            
-            <!-- Loan Specific Details -->
-            <div class="detail-card" id="loan-details" style="display: none;">
-                <div class="detail-row">
-                    <div class="detail-label">Loan Amount</div>
-                    <div class="detail-value" id="detail-loan-amount">-</div>
+                <div class="detail-card">
+                    <div class="detail-row">
+                        <div class="detail-label">Benefit Program</div>
+                        <div class="detail-value" id="detail-program">-</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Program Time</div>
+                        <div class="detail-value" id="detail-program-time">-</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Request Date</div>
+                        <div class="detail-value" id="detail-date">-</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value status" id="detail-status">-</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Reason</div>
+                        <div class="detail-value" id="detail-reason">Not specified</div>
+                    </div>
                 </div>
                 
-                <div class="detail-row">
-                    <div class="detail-label">Loan Purpose</div>
-                    <div class="detail-value" id="detail-loan-purpose">-</div>
+                <!-- Loan Specific Details -->
+                <div class="detail-card" id="loan-details" style="display: none;">
+                    <div class="detail-row">
+                        <div class="detail-label">Loan Amount</div>
+                        <div class="detail-value" id="detail-loan-amount">-</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Loan Purpose</div>
+                        <div class="detail-value" id="detail-loan-purpose">-</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Loan Documents</div>
+                        <div class="detail-value" id="detail-loan-docs">-</div>
+                    </div>
                 </div>
                 
-                <div class="detail-row">
-                    <div class="detail-label">Documents</div>
-                    <div class="detail-value" id="detail-loan-docs">No documents uploaded</div>
+                <div class="modal-buttons">
+                    <button class="btn btn-success" onclick="app.showConfirmationModal('Approve', app.currentRequestId)" id="approve-btn">
+                        <i class="fas fa-check-circle"></i> Approve
+                    </button>
+                    <button class="btn btn-danger" onclick="app.showConfirmationModal('Reject', app.currentRequestId)" id="reject-btn">
+                        <i class="fas fa-times-circle"></i> Reject
+                    </button>
+                    <button class="btn btn-outline" onclick="app.closeModal('details-modal')">
+                        <i class="fas fa-times"></i> Close
+                    </button>
                 </div>
-            </div>
-            
-            <div class="modal-buttons" id="action-buttons">
-                <button class="btn btn-success" id="approve-btn">
-                    <i class="fas fa-check"></i> Approve
-                </button>
-                <button class="btn btn-danger" id="reject-btn">
-                    <i class="fas fa-times"></i> Reject
-                </button>
-                <button class="btn btn-outline" onclick="closeModal()">
-                    <i class="fas fa-times"></i> Close
-                </button>
             </div>
         </div>
-    </div>
 
-    <!-- Confirmation Modal -->
-    <div class="modal confirmation-modal" id="confirmation-modal">
-        <div class="modal-content">
-            <div class="confirmation-icon" id="confirmation-icon"></div>
-            <h3 class="confirmation-text" id="confirmation-text"></h3>
-            <div class="modal-buttons">
-                <button class="btn btn-outline" id="confirm-cancel-btn">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-                <button class="btn" id="confirm-action-btn">
-                    <i class="fas fa-check"></i> Confirm
-                </button>
+        <!-- Confirmation Modal -->
+        <div class="modal confirmation-modal" id="confirmation-modal" role="dialog" aria-labelledby="confirmation-title">
+            <div class="modal-content">
+                <i class="fas fa-question-circle confirmation-icon text-primary"></i>
+                <h3 class="confirmation-text" id="confirmation-text"></h3>
+                <div class="modal-buttons">
+                    <button class="btn btn-primary" id="confirm-action-btn">
+                        <i class="fas fa-check"></i> Yes
+                    </button>
+                    <button class="btn btn-outline" onclick="app.closeModal('confirmation-modal')">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const BASE_URL = 'http://localhost:3006';
-        let currentRequestId = null;
-        let currentAction = null;
+        class HRDashboardApp {
+            constructor() {
+                this.BASE_URL = 'http://localhost:3006';
+                this.currentRequestId = null;
+                this.currentAction = null;
+                this.init();
+            }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            loadAllRequests();
-            
-            // Setup modal buttons
-            document.getElementById('approve-btn').addEventListener('click', () => {
-                showConfirmation('approve');
-            });
-            
-            document.getElementById('reject-btn').addEventListener('click', () => {
-                showConfirmation('reject');
-            });
-            
-            document.getElementById('confirm-action-btn').addEventListener('click', () => {
-                if (currentRequestId && currentAction) {
-                    updateRequestStatus(currentRequestId, currentAction);
-                }
-                closeConfirmation();
-            });
-            
-            document.getElementById('confirm-cancel-btn').addEventListener('click', closeConfirmation);
-        });
+            init() {
+                this.loadAllRequests();
+            }
 
-        function validateEmpId(empId) {
-            return /^ATS0(?!000)[0-9]{3}$/.test(empId);
-        }
-
-        function validateEmail(email) {
-            return /^[a-zA-Z0-9._-]{3,50}@gmail\.com$/.test(email);
-        }
-
-        async function loadAllRequests() {
-            try {
-                const response = await fetch(`${BASE_URL}/api/requests`);
-                if (response.ok) {
+            async loadAllRequests() {
+                try {
+                    const response = await fetch(`${this.BASE_URL}/api/requests`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch requests');
+                    }
                     const requests = await response.json();
-                    updateRequestsTable(requests);
-                } else {
-                    showError('Error loading requests');
-                    updateRequestsTable([]);
+                    this.renderRequests(requests);
+                } catch (e) {
+                    console.error('Error:', e);
+                    this.showAlert('Error loading requests', 'error');
+                    this.renderRequests([]);
                 }
-            } catch (e) {
-                console.error('Error:', e);
-                showError('Error connecting to server');
-                updateRequestsTable([]);
             }
-        }
 
-        function updateRequestsTable(requests) {
-            const tbody = document.getElementById('requests-body');
-            tbody.innerHTML = '';
+            renderRequests(requests) {
+                const tbody = document.getElementById('requests-body');
+                tbody.innerHTML = '';
 
-            if (requests.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="empty-state">
-                            <i class="far fa-folder-open"></i>
-                            <p>No requests found</p>
+                if (!requests.length) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="far fa-folder-open"></i>
+                                <p>No requests found</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                requests.forEach(req => {
+                    const tr = document.createElement('tr');
+                    const date = new Date(req.request_date).toLocaleDateString();
+                    const statusClass = `status-${req.status.toLowerCase()}`;
+
+                    tr.innerHTML = `
+                        <td>${req.emp_id}</td>
+                        <td>${req.name}</td>
+                        <td>${req.program}</td>
+                        <td>${date}</td>
+                        <td><span class="status-badge ${statusClass}">${req.status}</span></td>
+                        <td>
+                            <button class="view-details-btn" onclick="app.showRequestDetails(${req.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
                         </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            requests.forEach(req => {
-                if (!validateEmpId(req.emp_id) || !validateEmail(req.email)) {
-                    console.warn(`Invalid request data: emp_id=${req.emp_id}, email=${req.email}`);
-                    return;
-                }
-
-                const tr = document.createElement('tr');
-                const date = new Date(req.request_date).toLocaleDateString();
-                
-                tr.innerHTML = `
-                    <td>${req.emp_id}</td>
-                    <td>${req.name}</td>
-                    <td>${req.program}</td>
-                    <td>${date}</td>
-                    <td><span class="status-badge status-${req.status.toLowerCase()}">
-                        <i class="fas fa-circle"></i> ${req.status}
-                    </span></td>
-                    <td>
-                        <button class="view-details-btn" onclick="showRequestDetails(${req.id})">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function showRequestDetails(requestId) {
-            try {
-                const response = await fetch(`${BASE_URL}/api/requests`);
-                const requests = await response.json();
-                const request = requests.find(r => r.id === requestId);
-                if (!request) {
-                    showError('Request not found');
-                    return;
-                }
-                displayRequestDetails(request);
-            } catch (e) {
-                console.error('Error:', e);
-                showError('Error loading request details');
-            }
-        }
-
-        function displayRequestDetails(request) {
-            if (!validateEmpId(request.emp_id)) {
-                showError('Invalid Employee ID format');
-                return;
-            }
-            if (!validateEmail(request.email)) {
-                showError('Invalid Email format');
-                return;
-            }
-
-            // Set request details
-            document.getElementById('detail-name').textContent = request.name;
-            document.getElementById('detail-emp-id').textContent = request.emp_id;
-            document.getElementById('detail-email').textContent = request.email;
-            document.getElementById('detail-program').textContent = request.program;
-            document.getElementById('detail-program-time').textContent = request.program_time || 'Not specified';
-            document.getElementById('detail-date').textContent = new Date(request.request_date).toLocaleDateString();
-            
-            const statusElement = document.getElementById('detail-status');
-            statusElement.innerHTML = `<i class="fas fa-circle"></i> ${request.status}`;
-            statusElement.className = `detail-value status status-${request.status.toLowerCase()}`;
-            
-            document.getElementById('detail-reason').textContent = request.reason || 'Not specified';
-
-            // Handle loan details
-            const loanDetails = document.getElementById('loan-details');
-            if (request.program === 'Employee Loans') {
-                loanDetails.style.display = 'block';
-                document.getElementById('detail-loan-amount').textContent = request.amount ? 
-                    `₹${parseInt(request.amount).toLocaleString('en-IN')}` : 'Not specified';
-                document.getElementById('detail-loan-purpose').textContent = request.loan_type || 'Not specified';
-                
-                const docsElement = document.getElementById('detail-loan-docs');
-                if (request.document_path) {
-                    docsElement.innerHTML = `<a href="${BASE_URL}/${request.document_path}" target="_blank" style="color: var(--primary);">
-                        <i class="fas fa-file-download"></i> Download Document
-                    </a>`;
-                } else {
-                    docsElement.textContent = 'No documents uploaded';
-                }
-            } else {
-                loanDetails.style.display = 'none';
-            }
-
-            // Show action buttons only for pending requests
-            const actionButtons = document.getElementById('action-buttons');
-            if (request.status === 'Pending') {
-                actionButtons.style.display = 'flex';
-                currentRequestId = request.id;
-            } else {
-                actionButtons.style.display = 'none';
-            }
-
-            document.getElementById('details-modal').style.display = 'flex';
-        }
-
-        function showConfirmation(action) {
-            currentAction = action.charAt(0).toUpperCase() + action.slice(1);
-            
-            const icon = document.getElementById('confirmation-icon');
-            const text = document.getElementById('confirmation-text');
-            const actionBtn = document.getElementById('confirm-action-btn');
-            
-            if (action === 'approve') {
-                icon.innerHTML = '🤔';
-                icon.style.color = 'var(--success)';
-                text.textContent = `Are you sure you want to approve this request?`;
-                actionBtn.className = 'btn btn-success';
-                actionBtn.innerHTML = '<i class="fas fa-check"></i> Approve';
-            } else {
-                icon.innerHTML = '🤨';
-                icon.style.color = 'var(--danger)';
-                text.textContent = `Are you sure you want to reject this request?`;
-                actionBtn.className = 'btn btn-danger';
-                actionBtn.innerHTML = '<i class="fas fa-times"></i> Reject';
-            }
-            
-            document.getElementById('confirmation-modal').style.display = 'flex';
-        }
-
-        function closeConfirmation() {
-            document.getElementById('confirmation-modal').style.display = 'none';
-        }
-
-        async function updateRequestStatus(requestId, status) {
-            try {
-                const response = await fetch(`${BASE_URL}/api/requests/${requestId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status }),
+                    `;
+                    tbody.appendChild(tr);
                 });
-                if (response.ok) {
-                    showAlert(`Request ${status.toLowerCase()} successfully!`, 'success');
-                    closeModal();
-                    loadAllRequests();
-                } else {
-                    const error = await response.json();
-                    showError(error.error || `Error updating request to ${status}`);
+            }
+
+            async showRequestDetails(requestId) {
+                try {
+                    const response = await fetch(`${this.BASE_URL}/api/requests`);
+                    const requests = await response.json();
+                    const request = requests.find(r => r.id === requestId);
+                    if (!request) {
+                        this.showAlert('Request not found', 'error');
+                        return;
+                    }
+                    this.displayRequestDetails(request);
+                    this.currentRequestId = requestId;
+
+                    // Disable Approve/Reject buttons if status is not Pending
+                    const approveBtn = document.getElementById('approve-btn');
+                    const rejectBtn = document.getElementById('reject-btn');
+                    const isPending = request.status === 'Pending';
+                    approveBtn.disabled = !isPending;
+                    rejectBtn.disabled = !isPending;
+                    approveBtn.style.opacity = isPending ? '1' : '0.5';
+                    rejectBtn.style.opacity = isPending ? '1' : '0.5';
+                } catch (e) {
+                    console.error('Error:', e);
+                    this.showAlert('Error loading request details', 'error');
                 }
-            } catch (e) {
-                console.error('Error:', e);
-                showError('Error connecting to server. Please try again.');
+            }
+
+            displayRequestDetails(request) {
+                document.getElementById('detail-name').textContent = request.name;
+                document.getElementById('detail-emp-id').textContent = request.emp_id;
+                document.getElementById('detail-email').textContent = request.email;
+                document.getElementById('detail-program').textContent = request.program;
+                document.getElementById('detail-program-time').textContent = request.program_time || 'Not specified';
+                document.getElementById('detail-date').textContent = new Date(request.request_date).toLocaleDateString();
+                
+                const statusElement = document.getElementById('detail-status');
+                statusElement.innerHTML = `<span class="status-badge status-${request.status.toLowerCase()}">${request.status}</span>`;
+                
+                document.getElementById('detail-reason').textContent = request.reason || 'Not specified';
+
+                const loanDetails = document.getElementById('loan-details');
+                if (request.program === 'Employee Loans') {
+                    loanDetails.style.display = 'block';
+                    document.getElementById('detail-loan-amount').textContent = request.amount ? 
+                        `₹${parseInt(request.amount).toLocaleString('en-IN')}` : 'Not specified';
+                    document.getElementById('detail-loan-purpose').textContent = request.loan_type || 'Not specified';
+                    
+                    const docsElement = document.getElementById('detail-loan-docs');
+                    if (request.document_path) {
+                        // Normalize path to handle both forward and backslashes
+                        const normalizedPath = request.document_path.replace(/\\/g, '/');
+                        const filename = normalizedPath.split('/').pop();
+                        docsElement.innerHTML = `<a href="${this.BASE_URL}/download/${encodeURIComponent(filename)}" target="_blank" class="text-primary">
+                            <i class="fas fa-file-download"></i> Download Document
+                        </a>`;
+                    } else {
+                        docsElement.textContent = 'No documents uploaded';
+                    }
+                } else {
+                    loanDetails.style.display = 'none';
+                }
+
+                document.getElementById('details-modal').style.display = 'flex';
+            }
+
+            showConfirmationModal(action, requestId) {
+                this.currentAction = action;
+                this.currentRequestId = requestId;
+                document.getElementById('confirmation-text').textContent = 
+                    `Are you sure you want to ${action.toLowerCase()} this request?`;
+                const confirmBtn = document.getElementById('confirm-action-btn');
+                confirmBtn.onclick = () => this.updateRequestStatus(requestId, action);
+                document.getElementById('confirmation-modal').style.display = 'flex';
+            }
+
+            async updateRequestStatus(requestId, status) {
+                try {
+                    const response = await fetch(`${this.BASE_URL}/api/requests/${requestId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ status }),
+                    });
+
+                    if (response.ok) {
+                        this.showAlert(`Request ${status.toLowerCase()} successfully!`, 'success');
+                        this.loadAllRequests();
+                        this.closeModal('confirmation-modal');
+                        this.closeModal('details-modal');
+                    } else {
+                        const error = await response.json();
+                        this.showAlert(error.error || 'Error updating status', 'error');
+                    }
+                } catch (e) {
+                    console.error('Error:', e);
+                    this.showAlert('Error updating request status', 'error');
+                }
+            }
+
+            closeModal(modalId = 'details-modal') {
+                document.getElementById(modalId).style.display = 'none';
+                this.currentRequestId = null;
+                this.currentAction = null;
+            }
+
+            showAlert(message, type = 'success') {
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type}`;
+                alert.innerHTML = `
+                    ${message}
+                    <button class="alert-close"><i class="fas fa-times"></i></button>
+                `;
+                alert.style.position = 'fixed';
+                alert.style.top = '20px';
+                alert.style.right = '20px';
+                alert.style.padding = '1rem 1.5rem';
+                alert.style.borderRadius = 'var(--radius-md)';
+                alert.style.boxShadow = 'var(--shadow-md)';
+                alert.style.zIndex = '1100';
+                alert.style.animation = 'slideIn 0.3s ease';
+
+                if (type === 'success') {
+                    alert.style.backgroundColor = 'var(--success)';
+                    alert.style.color = 'white';
+                } else {
+                    alert.style.backgroundColor = 'var(--danger)';
+                    alert.style.color = 'white';
+                }
+
+                const closeBtn = alert.querySelector('.alert-close');
+                closeBtn.onclick = () => {
+                    alert.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => alert.remove(), 300);
+                };
+
+                document.body.appendChild(alert);
+
+                setTimeout(() => {
+                    alert.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
             }
         }
 
-        function closeModal() {
-            document.getElementById('details-modal').style.display = 'none';
-            currentRequestId = null;
-        }
-
-        function showAlert(message, type = 'success') {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-                ${message}
-                <button class="alert-close" onclick="this.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            
-            document.body.appendChild(alert);
-            
-            setTimeout(() => {
-                alert.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => {
-                    alert.remove();
-                }, 300);
-            }, 5000);
-        }
-
-        function showError(message) {
-            showAlert(message, 'error');
-        }
+        const app = new HRDashboardApp();
+        window.app = app;
     </script>
 </body>
 </html>
